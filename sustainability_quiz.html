@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sustainability Quiz Platform</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .header h1 {
+            color: #2d3748;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #4a5568;
+            font-size: 1.1rem;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #48bb78, #38a169);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(72, 187, 120, 0.3);
+        }
+
+        .btn.secondary {
+            background: linear-gradient(135deg, #4299e1, #3182ce);
+        }
+
+        .btn.secondary:hover {
+            box-shadow: 0 10px 20px rgba(66, 153, 225, 0.3);
+        }
+
+        .login-form {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #2d3748;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #48bb78;
+        }
+
+        .quiz-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .question-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .question-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .question-number {
+            background: linear-gradient(135deg, #48bb78, #38a169);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+
+        .difficulty-badge {
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .difficulty-easy { background: #c6f6d5; color: #22543d; }
+        .difficulty-medium { background: #fed7d7; color: #742a2a; }
+        .difficulty-hard { background: #fbb6ce; color: #702459; }
+
+        .question-text {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            line-height: 1.6;
+            color: #2d3748;
+        }
+
+        .answer-options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .answer-option {
+            background: #f7fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .answer-option:hover {
+            background: #edf2f7;
+            border-color: #cbd5e0;
+        }
+
+        .answer-option.selected {
+            background: #e6fffa;
+            border-color: #48bb78;
+        }
+
+        .quiz-progress {
+            background: #e2e8f0;
+            height: 8px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .quiz-progress-fill {
+            background: linear-gradient(135deg, #48bb78, #38a169);
+            height: 100%;
+            transition: width 0.3s ease;
+        }
+
+        .quiz-controls {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+
+        .timer {
+            background: #fed7d7;
+            color: #742a2a;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .leaderboard {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .leaderboard-entry {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: white;
+            padding: 20px;
+            margin-bottom: 10px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .leaderboard-entry.top-3 {
+            background: linear-gradient(135deg, #ffd700, #ffed4e);
+        }
+
+        .leaderboard-rank {
+            background: #4299e1;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+        }
+
+        .leaderboard-name {
+            flex: 1;
+            margin: 0 20px;
+            font-weight: 600;
+        }
+
+        .leaderboard-score {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #2d3748;
+        }
+
+        .results-summary {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .results-score {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #48bb78;
+            margin-bottom: 20px;
+        }
+
+        .results-message {
+            font-size: 1.3rem;
+            color: #4a5568;
+            margin-bottom: 30px;
+        }
+
+        .qr-section {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .qr-code {
+            display: inline-block;
+            padding: 20px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .nav-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .btn {
+                width: 200px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🌱 Sustainability Quiz Platform</h1>
+            <p>Test your knowledge on climate change and sustainability</p>
+        </div>
+
+        <!-- Welcome Screen -->
+        <div id="welcome-screen" class="card">
+            <div class="nav-buttons">
+                <button class="btn" onclick="showLogin()">Start Quiz</button>
+                <button class="btn secondary" onclick="showLeaderboard()">View Leaderboard</button>
+                <button class="btn secondary" onclick="showQRCode()">Generate QR Code</button>
+            </div>
+            
+            <div class="qr-section">
+                <h3>📱 Scan to Access Quiz</h3>
+                <div id="qr-display" class="qr-code" style="display: none;">
+                    <div id="qr-code-canvas"></div>
+                    <p style="margin-top: 10px;">Scan this QR code to access the quiz</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Login Screen -->
+        <div id="login-screen" class="card hidden">
+            <h2 style="text-align: center; margin-bottom: 30px;">Enter Your Details</h2>
+            <form class="login-form" onsubmit="startQuiz(event)">
+                <div class="form-group">
+                    <label for="username">Name:</label>
+                    <input type="text" id="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="difficulty">Choose Difficulty:</label>
+                    <select id="difficulty" style="width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 10px; font-size: 1rem;">
+                        <option value="easy">Easy (15 easy questions)</option>
+                        <option value="medium">Medium (15 medium questions)</option>
+                        <option value="hard">Hard (15 hard questions)</option>
+                        <option value="mixed">Mixed (6 easy, 6 medium, 3 hard)</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn" style="width: 100%;">Start Quiz</button>
+                <button type="button" class="btn secondary" style="width: 100%; margin-top: 10px;" onclick="showWelcome()">Back</button>
+            </form>
+        </div>
+
+        <!-- Quiz Screen -->
+        <div id="quiz-screen" class="card hidden">
+            <div class="quiz-container">
+                <div class="quiz-progress">
+                    <div class="quiz-progress-fill" id="progress-fill"></div>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <div class="timer" id="timer">Time: 15:00</div>
+                    <div id="question-counter" style="font-weight: 600;">Question 1 of 15</div>
+                </div>
+                
+                <div class="question-card">
+                    <div class="question-header">
+                        <div class="question-number" id="question-number">1</div>
+                        <div class="difficulty-badge" id="question-difficulty">Easy</div>
+                    </div>
+                    <div class="question-text" id="question-text"></div>
+                    <div class="answer-options" id="answer-options"></div>
+                </div>
+
+                <div class="quiz-controls">
+                    <button class="btn secondary" id="prev-btn" onclick="previousQuestion()" disabled>Previous</button>
+                    <button class="btn" id="next-btn" onclick="nextQuestion()">Next</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Screen -->
+        <div id="results-screen" class="card hidden">
+            <div class="results-summary">
+                <div class="results-score" id="final-score">0/15</div>
+                <div class="results-message" id="results-message"></div>
+                <div style="margin: 30px 0;">
+                    <button class="btn" onclick="showLeaderboard()">View Leaderboard</button>
+                    <button class="btn secondary" onclick="restartQuiz()">Take Quiz Again</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Leaderboard Screen -->
+        <div id="leaderboard-screen" class="card hidden">
+            <h2 style="text-align: center; margin-bottom: 30px;">🏆 Leaderboard</h2>
+            <div class="leaderboard" id="leaderboard-list">
+                <!-- Leaderboard entries will be populated here -->
+            </div>
+            <div style="text-align: center; margin-top: 30px;">
+                <button class="btn secondary" onclick="showWelcome()">Back to Home</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode/1.5.3/qrcode.min.js"></script>
+    <script>
+        // Quiz data from the document
+        const quizData = [
+            // Easy Questions
+            { id: 1, difficulty: "easy", question: "What is the primary difference between weather and climate?", options: ["Weather is long-term atmospheric conditions, climate is short-term.", "Weather is human-caused, climate is natural.", "Weather is global, climate is local.", "Weather is daily atmospheric conditions, climate is long-term patterns."], correct: 3 },
+            { id: 2, difficulty: "easy", question: "Which of the following is a major greenhouse gas primarily increased by human activities?", options: ["Oxygen", "Nitrogen", "Carbon Dioxide", "Argon"], correct: 2 },
+            { id: 3, difficulty: "easy", question: "What is the main goal of the European Green Deal by 2050?", options: ["To become the largest industrial power.", "To achieve climate neutrality (net-zero greenhouse gas emissions).", "To increase fossil fuel production.", "To expand agricultural land."], correct: 1 },
+            { id: 4, difficulty: "easy", question: "What does \"climate neutrality\" mean?", options: ["Having no climate at all.", "Achieving net-zero greenhouse gas emissions.", "Only using natural resources.", "Ignoring climate change impacts."], correct: 1 },
+            { id: 5, difficulty: "easy", question: "Which European country is known for Greta Thunberg and the start of the Fridays for Future movement?", options: ["Germany", "Sweden", "France", "United Kingdom"], correct: 1 },
+            { id: 6, difficulty: "easy", question: "What is the name of the EU's carbon market system, launched in 2005?", options: ["European Carbon Tax (ECT)", "Emissions Trading System (ETS)", "Green Economy Initiative (GEI)", "European Green Fund (EGF)"], correct: 1 },
+            { id: 7, difficulty: "easy", question: "What is the primary driver of Earth's climate system?", options: ["Volcanic eruptions", "Solar energy", "Ocean currents", "Earth's magnetic field"], correct: 1 },
+            { id: 8, difficulty: "easy", question: "Which year was recorded as the hottest on record globally, according to recent reports?", options: ["2006", "2023", "2020", "2024"], correct: 3 },
+            { id: 9, difficulty: "easy", question: "What is one major environmental consequence of rising global temperatures?", options: ["Increased ice formation", "Melting glaciers", "Decreased sea levels", "Extreme winters"], correct: 1 },
+            { id: 10, difficulty: "easy", question: "What is the purpose of the EU's \"Fit for 55\" package?", options: ["To promote physical fitness in Europe.", "To detail legislation to reach the 2030 emissions reduction target.", "To set new health standards for citizens.", "To encourage tourism in 55 European cities."], correct: 1 },
+            { id: 11, difficulty: "easy", question: "Which of the following is the largest contributor to greenhouse gas (GHG) emissions, accounting for 24% of total emissions?", options: ["Industry", "Transportation", "Agriculture", "Construction"], correct: 0 },
+            { id: 12, difficulty: "easy", question: "What is the name of the UK-launched climate activism group that employs civil disobedience tactics?", options: ["Greenpeace", "Extinction Rebellion (XR)", "Friends of the Earth", "Climate Action Network"], correct: 1 },
+            { id: 13, difficulty: "easy", question: "What percentage of global vehicle sales did electric vehicles (EVs) make up in 2024?", options: ["18%", "22%", "25%", "30%"], correct: 1 },
+            { id: 14, difficulty: "easy", question: "What is the term for the long-term heating of Earth's surface observed since the pre-industrial period due to human activities?", options: ["Climate variability", "Global warming", "Weather anomaly", "Atmospheric pressure"], correct: 1 },
+            { id: 15, difficulty: "easy", question: "What is one of the key principles of the EU's energy system decarbonization strategy?", options: ["Prioritizing fossil fuel extraction.", "Developing a power sector largely based on renewable resources.", "Decreasing energy consumption.", "Relying solely on nuclear power."], correct: 1 },
+            
+            // Medium Questions
+            { id: 41, difficulty: "medium", question: "What is the projected average sea-level rise in Europe by the end of the century?", options: ["10 to 20 cm", "30 to 40 cm", "60 to 80 cm", "100 to 120 cm"], correct: 2 },
+            { id: 42, difficulty: "medium", question: "The EU Emissions Trading System (ETS) operates on a \"cap and trade\" principle. What does the \"cap\" refer to?", options: ["The maximum price for carbon allowances.", "The limit set on the total amount of greenhouse gases that can be emitted by covered sectors.", "The maximum number of companies allowed to trade emissions.", "The total amount of renewable energy produced."], correct: 1 },
+            { id: 43, difficulty: "medium", question: "What is the intermediate milestone set by the European Climate Law for greenhouse gas emissions reduction by 2030 compared to 1990 levels?", options: ["20% reduction", "35% reduction", "55% reduction", "70% reduction"], correct: 2 },
+            { id: 44, difficulty: "medium", question: "Which of the following is a key challenge for the large-scale adoption of green hydrogen in Europe?", options: ["Lack of political will.", "High production cost.", "Insufficient demand.", "Limited raw materials."], correct: 1 },
+            { id: 45, difficulty: "medium", question: "What percentage of the EU's total greenhouse gas emissions were covered by the EU ETS in 2024?", options: ["Around 15%", "Around 36%", "Around 45%", "Around 50%"], correct: 2 },
+            { id: 46, difficulty: "medium", question: "What was the estimated total economic loss in the European Union due to weather- and climate-related extremes between 1980 and 2023?", options: ["EUR 100 billion", "EUR 300 billion", "EUR 738 billion", "EUR 1 trillion"], correct: 2 },
+            { id: 47, difficulty: "medium", question: "What is one of the specific targets of the EU's Farm to Fork Strategy regarding pesticide use by 2030?", options: ["Increase pesticide use by 50%.", "Reduce chemical pesticide use by 50%.", "Maintain current pesticide levels.", "Ban all pesticides immediately."], correct: 1 },
+            { id: 48, difficulty: "medium", question: "What is the projected increase in annual losses from droughts in Europe if the global average temperature increases by 3 degrees Celsius?", options: ["From EUR 9 billion to EUR 15 billion.", "From EUR 9 billion to EUR 20 billion.", "From EUR 9 billion to EUR 40 billion.", "From EUR 9 billion to EUR 100 billion."], correct: 2 },
+            { id: 49, difficulty: "medium", question: "Which European country had the highest share of renewables in its net electricity generation in 2024?", options: ["Germany", "Portugal", "Sweden", "Denmark"], correct: 3 },
+            { id: 50, difficulty: "medium", question: "What is the estimated percentage of total losses from weather- and climate-related extremes in the EU that were covered by private insurance between 1980 and 2023?", options: ["Over 50%", "30-40%", "Less than 20%", "Nearly 100%"], correct: 2 },
+            
+            // Hard Questions
+            { id: 81, difficulty: "hard", question: "The EU's Carbon Border Adjustment Mechanism (CBAM) entered its transitional phase on October 1, 2023. When is it expected to be fully in place, requiring the purchase and surrender of CBAM certificates?", options: ["2024", "2025", "2026", "2030"], correct: 2 },
+            { id: 82, difficulty: "hard", question: "What was the total new wind capacity installed across Europe in 2024, with 12.9 GW specifically in the EU?", options: ["5 GW", "10 GW", "16.4 GW", "20 GW"], correct: 2 },
+            { id: 83, difficulty: "hard", question: "What is the estimated percentage of the EU's 2030 climate target that the European Commission projects will be achieved, based on updated National Energy and Climate Plans?", options: ["49%", "51%", "54%", "55%"], correct: 2 },
+            { id: 84, difficulty: "hard", question: "What is the proposed EU climate target for 2040, as presented by the Commission in February 2024?", options: ["50% reduction in net GHG emissions compared to 1990 levels.", "75% reduction in net GHG emissions compared to 1990 levels.", "90% reduction in net GHG emissions compared to 1990 levels.", "100% reduction in net GHG emissions compared to 1990 levels."], correct: 2 },
+            { id: 85, difficulty: "hard", question: "What was the average increase in European land temperatures between 2013 and 2023, compared to the global mean increase during the same period?", options: ["1.19 to 1.22 degrees Celsius", "1.5 to 1.8 degrees Celsius", "2.12 to 2.19 degrees Celsius", "3.0 to 3.5 degrees Celsius"], correct: 2 }
+        ];
+
+        // Game state
+        let currentUser = null;
+        let currentQuiz = [];
+        let currentQuestionIndex = 0;
+        let userAnswers = [];
+        let quizTimer = null;
+        let timeRemaining = 900; // 15 minutes in seconds
+        let scores = JSON.parse(localStorage.getItem('quizScores') || '[]');
+
+        // Screen management
+        function showScreen(screenId) {
+            document.querySelectorAll('.card').forEach(card => card.classList.add('hidden'));
+            document.getElementById(screenId).classList.remove('hidden');
+        }
+
+        function showWelcome() {
+            showScreen('welcome-screen');
+        }
+
+        function showLogin() {
+            showScreen('login-screen');
+        }
+
+        function showLeaderboard() {
+            updateLeaderboard();
+            showScreen('leaderboard-screen');
+        }
+
+        function showQRCode() {
+            const qrDisplay = document.getElementById('qr-display');
+            const canvas = document.getElementById('qr-code-canvas');
+            
+            if (qrDisplay.style.display === 'none') {
+                // Generate QR code with current page URL
+                canvas.innerHTML = '';
+                QRCode.toCanvas(canvas, window.location.href, {
+                    width: 200,
+                    margin: 2,
+                    color: {
+                        dark: '#2d3748',
+                        light: '#ffffff'
+                    }
+                }, function (error) {
+                    if (error) console.error(error);
+                });
+                qrDisplay.style.display = 'block';
+            } else {
+                qrDisplay.style.display = 'none';
+            }
+        }
+
+        // Quiz logic
+        function startQuiz(event) {
+            event.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const email = document.getElementById('email').value;
+            const difficulty = document.getElementById('difficulty').value;
+            
+            currentUser = { username, email, difficulty };
+            
+            // Select questions based on difficulty - ALWAYS 15 questions total
+            let selectedQuestions = [];
+            
+            if (difficulty === 'easy') {
+                // For easy mode: 15 easy questions
+                selectedQuestions = quizData.filter(q => q.difficulty === 'easy')
+                    .sort(() => 0.5 - Math.random()).slice(0, 15);
+            } else if (difficulty === 'medium') {
+                // For medium mode: 15 medium questions
+                selectedQuestions = quizData.filter(q => q.difficulty === 'medium')
+                    .sort(() => 0.5 - Math.random()).slice(0, 15);
+            } else if (difficulty === 'hard') {
+                // For hard mode: 15 hard questions (or all available if less than 15)
+                selectedQuestions = quizData.filter(q => q.difficulty === 'hard')
+                    .sort(() => 0.5 - Math.random()).slice(0, 15);
+            } else {
+                // Mixed mode - 6 easy, 6 medium, 3 hard with constraint: first 5 are easy/medium
+                const easyQuestions = quizData.filter(q => q.difficulty === 'easy')
+                    .sort(() => 0.5 - Math.random());
+                const mediumQuestions = quizData.filter(q => q.difficulty === 'medium')
+                    .sort(() => 0.5 - Math.random());
+                const hardQuestions = quizData.filter(q => q.difficulty === 'hard')
+                    .sort(() => 0.5 - Math.random()).slice(0, 3);
+                
+                // First 5 questions: mix of easy and medium
+                const firstFiveEasy = easyQuestions.slice(0, 3);
+                const firstFiveMedium = mediumQuestions.slice(0, 2);
+                const firstFive = [...firstFiveEasy, ...firstFiveMedium].sort(() => 0.5 - Math.random());
+                
+                // Remaining questions: 3 more easy, 4 more medium
+                const remainingEasy = easyQuestions.slice(3, 6);
+                const remainingMedium = mediumQuestions.slice(2, 6);
+                
+                // Combine remaining easy, medium, and hard questions for positions 6-15
+                const remaining = [...remainingEasy, ...remainingMedium, ...hardQuestions]
+                    .sort(() => 0.5 - Math.random());
+                
+                selectedQuestions = [...firstFive, ...remaining];
+            }
+            
+            currentQuiz = selectedQuestions;
+            currentQuestionIndex = 0;
+            userAnswers = [];
+            timeRemaining = 900; // Reset timer
+            
+            startTimer();
+            loadQuestion();
+            showScreen('quiz-screen');
+        }
+
+        function startTimer() {
+            quizTimer = setInterval(() => {
+                timeRemaining--;
+                updateTimerDisplay();
+                
+                if (timeRemaining <= 0) {
+                    clearInterval(quizTimer);
+                    finishQuiz();
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timeRemaining / 60);
+            const seconds = timeRemaining % 60;
+            document.getElementById('timer').textContent = `Time: ${minutes}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        function loadQuestion() {
+            const question = currentQuiz[currentQuestionIndex];
+            
+            document.getElementById('question-number').textContent = currentQuestionIndex + 1;
+            document.getElementById('question-counter').textContent = `Question ${currentQuestionIndex + 1} of ${currentQuiz.length}`;
+            document.getElementById('question-difficulty').textContent = question.difficulty.charAt(0).toUpperCase() + question.difficulty.slice(1);
+            document.getElementById('question-difficulty').className = `difficulty-badge difficulty-${question.difficulty}`;
+            document.getElementById('question-text').textContent = question.question;
+            
+            const optionsContainer = document.getElementById('answer-options');
+            optionsContainer.innerHTML = '';
+            
+            question.options.forEach((option, index) => {
+                const optionElement = document.createElement('div');
+                optionElement.className = 'answer-option';
+                optionElement.textContent = `${String.fromCharCode(65 + index)}) ${option}`;
+                optionElement.onclick = () => selectAnswer(index);
+                
+                if (userAnswers[currentQuestionIndex] === index) {
+                    optionElement.classList.add('selected');
+                }
+                
+                optionsContainer.appendChild(optionElement);
+            });
+            
+            updateProgress();
+            updateNavigationButtons();
+        }
+
+        function selectAnswer(answerIndex) {
+            document.querySelectorAll('.answer-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            
+            document.querySelectorAll('.answer-option')[answerIndex].classList.add('selected');
+            userAnswers[currentQuestionIndex] = answerIndex;
+        }
+
+        function nextQuestion() {
+            if (currentQuestionIndex < currentQuiz.length - 1) {
+                currentQuestionIndex++;
+                loadQuestion();
+            } else {
+                finishQuiz();
+            }
+        }
+
+        function previousQuestion() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                loadQuestion();
+            }
+        }
+
+        function updateProgress() {
+            const progress = ((currentQuestionIndex + 1) / currentQuiz.length) * 100;
+            document.getElementById('progress-fill').style.width = `${progress}%`;
+        }
+
+        function updateNavigationButtons() {
+            document.getElementById('prev-btn').disabled = currentQuestionIndex === 0;
+            document.getElementById('next-btn').textContent = currentQuestionIndex === currentQuiz.length - 1 ? 'Finish Quiz' : 'Next';
+        }
+
+        function finishQuiz() {
+            clearInterval(quizTimer);
+            
+            let correctAnswers = 0;
+            currentQuiz.forEach((question, index) => {
+                if (userAnswers[index] === question.correct) {
+                    correctAnswers++;
+                }
+            });
+            
+            const score = correctAnswers;
+            const percentage = Math.round((score / currentQuiz.length) * 100);
+            
+            // Save score
+            const timeUsed = 900 - timeRemaining;
+            const userScore = {
+                username: currentUser.username,
+                email: currentUser.email,
+                difficulty: currentUser.difficulty,
+                score: score,
+                totalQuestions: currentQuiz.length,
+                percentage: percentage,
+                timeUsed: timeUsed,
+                date: new Date().toISOString()
+            };
+            
+            scores.push(userScore);
+            scores.sort((a, b
